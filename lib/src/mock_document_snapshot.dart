@@ -19,7 +19,19 @@ class MockDocumentSnapshot extends Mock implements DocumentSnapshot {
   String get id => _id;
 
   @override
-  dynamic get(dynamic key) => _document[key];
+  dynamic get(dynamic key) {
+    if (key is String && key.contains('.')) {
+      final parts = key.split('.');
+      var value = _document[parts.first];
+      parts.removeAt(0);
+      while (value != null && parts.isNotEmpty) {
+        value = value[parts.first];
+        parts.removeAt(0);
+      }
+      return value;
+    }
+    return _document[key];
+  }
 
   @override
   Map<String, dynamic> data() {
